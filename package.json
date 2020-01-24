@@ -1,0 +1,26 @@
+{
+  "name": "chatroom",
+  "version": "1.0.0",
+  "description": "A chatroom app using socket.io",
+  "main": "app.js",
+  "dependencies": {
+    "babel-register": "^6.26.0",
+    "express": "^4.17.1",
+    "socket.io": "^2.3.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hamza-k/chatroom.git"
+  },
+  "author": "Hamza Khadri",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/hamza-k/chatroom/issues"
+  },
+  "homepage": "https://github.com/hamza-k/chatroom#readme"
+}
