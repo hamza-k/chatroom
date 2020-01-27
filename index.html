@@ -1,13 +1,17 @@
 <!doctype html>
 <html>
     <head>
-        <title>Socket.IO chat</title>
+        <title>Socket.IO Chatroom</title>
         <link href="https://fonts.googleapis.com/css?family=Montserrat:400,400i,900,900i&display=swap" rel="stylesheet">
         <style>
             * { margin: 0; padding: 0; box-sizing: border-box; }
             body { 
                 font-size: 16px;
+                height: 100vh;
                 font-family: 'Montserrat', sans-serif;
+                background: rgb(20,30,48);
+                background: linear-gradient(59deg, rgba(20,30,48,1) 0%, rgba(36,59,85,1) 100%);
+                background-size: cover;
             }
 
             h1 {
@@ -16,21 +20,68 @@
                 font-weight: normal;
                 font-style: italic;
                 text-align: center;
-                padding: 20px ;
+                padding: 20px;
+                color: white;
             }
             #app {
-                display: grid;
                 width: calc(100% - 10px);
                 max-width: 1140px;
                 margin: 0 auto;
-                height: calc( 100vh - 89px);
+                height: calc( 100vh - 100px);
+                display: grid;
+                grid-template-columns: auto 250px;
+                grid-template-rows: 40px auto 50px;
+                background: #fbfbfb;
+                border-radius: 10px;
             }
+
+            #app #users {
+                grid-row-start: 1;
+                grid-row-end: 4;
+                grid-column-start: 2;
+                grid-column-end: 3;
+                background-color: #f0f0f0;
+                padding: 20px;
+                border-radius: 10px;
+            }
+
+            #userForm, #msgForm {
+                position: relative;
+                width: 100%;
+                padding: 10px 20px;
+            }
+
+            #userForm::after, #msgForm::after {
+                content:"";
+                position: absolute;
+                width: calc(100% - 40px);
+                height: 0;
+                bottom: 0;
+                left: 50%;
+                transform: translateX(-50%);
+                border: solid .5px #dadada;
+            }
+
+            #msgForm::after {
+                top: 0;
+            }
+
+            #messages {
+                padding: 20px 50px 20px 20px;
+            }
+
+
+            #messages li {
+                list-style: none;
+                padding: 5px 0;
+            }
+
         </style>
     </head>
     <body>
         <h1>Chatroom with Socket.io</h1>
         <div id="app">
-            <form action="">
+            <form id="userForm" action="">
                 <label for="">Username : </label><input id="u" autocomplete="off" /><button id="sendUser">Send</button>
             </form>
             <ul id="messages"></ul>
@@ -40,20 +91,50 @@
                     
                 </ul>
             </div>
-            <form action="">
+            <form id="msgForm" action="">
                 <input id="m" autocomplete="off" /><button id="send">Send</button>
             </form>
         </div>
         <script src="/socket.io/socket.io.js"></script>
         <script>
+            // Initializing
             var socket = io()
-            document.querySelector('form').addEventListener('submit', e => {
+
+            // Username for connecting first time
+            var myOldNickname = ""
+            var myNickname = "user-" + Math.round(Math.random() * 1000000, 0)
+            socket.emit('new user', myNickname)
+            document.querySelector('#u').value = myNickname
+
+            // Message sending
+            document.querySelector('form#msgForm').addEventListener('submit', e => {
                 e.preventDefault()
-                socket.emit('chat message', document.querySelector('#m').value)
+                socket.emit('chat message', myNickname + " - " + document.querySelector('#m').value)
                 document.querySelector('#m').value = ''
                 return false
             }, false)
 
+            // Username changing
+            document.querySelector('form#userForm').addEventListener('submit', e => {
+                e.preventDefault()
+                socket.emit('username change', {
+                    oldUsername: myNickname,
+                    newUsername: document.querySelector('#u').value
+                })
+                myOldNickname = ""
+            }, false)
+
+            // Username changed
+            socket.on('username change', data => {
+                myOldNickname = data.oldUsername
+                myNickname = data.newUsername
+                var node = document.createElement("li")
+                var textnode = document.createTextNode(myOldNickname + ' has changed his username: ' + myNickname)
+                node.appendChild(textnode)
+                document.querySelector('#messages').appendChild(node)
+            })
+
+            // Message displaying when new user is connected
             socket.on('new user', newUser => {
                 var node = document.createElement("li")
                 var textnode = document.createTextNode(newUser + ' is online now.')
@@ -61,6 +142,7 @@
                 document.querySelector('#messages').appendChild(node)
             })
 
+            // Message displaying
             socket.on('chat message', msg => {
                 var node = document.createElement("li")
                 var textnode = document.createTextNode(msg)
