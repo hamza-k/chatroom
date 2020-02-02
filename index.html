@@ -71,9 +71,71 @@
 
             #messages li {
                 list-style: none;
-                padding: 5px 0;
                 animation: newmsg .3s cubic-bezier(0, .8, 1, 1);
+                margin: 20px 0;
+                display: flex;
+                width: 100%;
+                justify-content: flex-start;
             }
+
+                #messages li div {
+                    background-color: #dadada;
+                    border-radius: 5px;
+                    padding: 20px;
+                    display: inline-block;
+                    min-width: 300px;
+                    max-width: calc(100% - 50px);
+                    position: relative;
+                }
+
+                #messages li div.my-own-one {
+                    background-color: rgb(20,30,48);
+                    color: white;
+                    justify-self: right;
+                }
+
+                #messages li div.my-own-one span {
+                    color: white;
+                }
+
+                #messages li span {
+                    font-style: italic;
+                    color: #555555;
+                    font-size: 14px;
+                }
+
+                #messages li hr {
+                    margin: 5px 0 15px;
+                    border: solid .5px #aaaaaa
+                }
+
+                #messages li div::before {
+                    content: '';
+                    position: absolute;
+                    width: 0px;
+                    height: 0px;
+                    width: 0;
+                    height: 0;
+                    border-style: solid;
+                    border-width: 0 0 22px 22px;
+                    border-color: transparent transparent #dadada transparent;
+                    bottom: 0;
+                    left: -15px;
+                }
+
+                #messages li div.my-own-one::before {
+                    width: 0;
+                    height: 0;
+                    border-style: solid;
+                    border-width: 22px 0 0 22px;
+                    border-color: transparent transparent transparent rgb(20,30,48);
+                    left: calc(100% - 7px);
+                }
+
+                #messages li p {
+                    font-size: 20px;
+                }
+
 
 @keyframes newmsg {
     0% {
@@ -194,10 +256,27 @@
             // Message displaying
             socket.on('chat message', msg => {
                 var node = document.createElement("li")
-                node.setAttribute('id', msg.id)
-                var textnode = document.createTextNode(msg.username +' - '+msg.content)
-                node.appendChild(textnode)
+                node.setAttribute('class', msg.id)
+                if (msg.id == myID){
+                    node.innerHTML =`<div class='my-own-one'>
+                    <span>${msg.username}</span>
+                    <hr> 
+                    <p>${msg.content}</p>
+                </div>`
+                } else {
+                    node.innerHTML =`<div>
+                    <span>${msg.username}</span>
+                    <hr> 
+                    <p>${msg.content}</p>
+                </div>`
+                }
+
                 document.querySelector('#messages').appendChild(node)
+                document.querySelectorAll('.'+myID).forEach(el => {
+                    el.style.justifyContent = 'flex-end'
+                })
+
+
             })
 
             // Exiting user
@@ -214,6 +293,9 @@
                 node.appendChild(textnode)
                 document.querySelector('#messages').appendChild(node)
             })
+
+
+            
         </script>
     </body>
 </html>
