@@ -62,18 +62,52 @@
                 border: solid .5px #dadada;
             }
 
-            #msgForm::after {
-                top: 0;
-            }
 
             #messages {
                 padding: 20px 50px 20px 20px;
+                overflow-y: scroll;
             }
 
 
             #messages li {
                 list-style: none;
                 padding: 5px 0;
+                animation: newmsg .3s cubic-bezier(0, .8, 1, 1);
+            }
+
+@keyframes newmsg {
+    0% {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+            #messages li.mod-msg {
+                font-style: italic;
+                color: #aaaaaa;
+            }
+
+            #msgForm {
+                display: flex;
+                flex-wrap: wrap;
+                align-items: stretch;
+                justify-content: space-between;
+            }
+
+            #msgForm button {
+                width: 50px;
+            }
+
+            #msgForm input {
+                width: calc(100% - 60px);
+            }
+
+            #msgForm::after {
+                top: 0;
             }
 
         </style>
@@ -101,15 +135,29 @@
             var socket = io()
 
             // Username for connecting first time
-            var myOldNickname = ""
             var myNickname = "user-" + Math.round(Math.random() * 1000000, 0)
+            var myID = "id-" + Math.round(Math.random() * 1000000, 0)
             socket.emit('new user', myNickname)
             document.querySelector('#u').value = myNickname
+
+            // New to the room
+            socket.emit('new in list', {id: myID, username: myNickname})
+
+            // Loading updated user list
+            socket.on('load list', arr => {
+                var ul = document.querySelector("#users ul");
+                ul.innerHTML = "";
+                for(user in arr){
+                    var li = document.createElement("li")
+                    li.appendChild(document.createTextNode(arr[user].username))
+                    ul.appendChild(li)
+                }
+            })
 
             // Message sending
             document.querySelector('form#msgForm').addEventListener('submit', e => {
                 e.preventDefault()
-                socket.emit('chat message', myNickname + " - " + document.querySelector('#m').value)
+                socket.emit('chat message', {content: document.querySelector('#m').value, username: myNickname, id: myID})
                 document.querySelector('#m').value = ''
                 return false
             }, false)
@@ -118,18 +166,18 @@
             document.querySelector('form#userForm').addEventListener('submit', e => {
                 e.preventDefault()
                 socket.emit('username change', {
+                    id: myID,
                     oldUsername: myNickname,
                     newUsername: document.querySelector('#u').value
                 })
-                myOldNickname = ""
+                myNickname = document.querySelector('#u').value
             }, false)
 
             // Username changed
             socket.on('username change', data => {
-                myOldNickname = data.oldUsername
-                myNickname = data.newUsername
                 var node = document.createElement("li")
-                var textnode = document.createTextNode(myOldNickname + ' has changed his username: ' + myNickname)
+                node.setAttribute('class', 'mod-msg')
+                var textnode = document.createTextNode(data.oldUsername + ' has changed his username: ' + data.newUsername)
                 node.appendChild(textnode)
                 document.querySelector('#messages').appendChild(node)
             })
@@ -137,6 +185,7 @@
             // Message displaying when new user is connected
             socket.on('new user', newUser => {
                 var node = document.createElement("li")
+                node.setAttribute('class', 'mod-msg')
                 var textnode = document.createTextNode(newUser + ' is online now.')
                 node.appendChild(textnode)
                 document.querySelector('#messages').appendChild(node)
@@ -145,7 +194,23 @@
             // Message displaying
             socket.on('chat message', msg => {
                 var node = document.createElement("li")
-                var textnode = document.createTextNode(msg)
+                node.setAttribute('id', msg.id)
+                var textnode = document.createTextNode(msg.username +' - '+msg.content)
+                node.appendChild(textnode)
+                document.querySelector('#messages').appendChild(node)
+            })
+
+            // Exiting user
+            window.addEventListener("beforeunload", function (e) {
+                e.preventDefault()
+                socket.emit('exit user', {id: myID, username: myNickname})
+            })
+
+            // User exited
+            socket.on('exit user', obj => {
+                var node = document.createElement("li")
+                node.setAttribute('class', 'mod-msg')
+                var textnode = document.createTextNode(obj.username + ' is gone !')
                 node.appendChild(textnode)
                 document.querySelector('#messages').appendChild(node)
             })
