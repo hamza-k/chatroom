@@ -5,6 +5,8 @@
         <link href="https://fonts.googleapis.com/css?family=Montserrat:400,400i,900,900i&display=swap" rel="stylesheet">
         <style>
             * { margin: 0; padding: 0; box-sizing: border-box; }
+            b {display: inline; padding: 0 .35em}
+
             body { 
                 font-size: 16px;
                 height: 100vh;
@@ -23,6 +25,7 @@
                 padding: 20px;
                 color: white;
             }
+
             #app {
                 width: calc(100% - 10px);
                 max-width: 1140px;
@@ -30,7 +33,7 @@
                 height: calc( 100vh - 100px);
                 display: grid;
                 grid-template-columns: auto 250px;
-                grid-template-rows: 40px auto 50px;
+                grid-template-rows: 60px auto 70px;
                 background: #fbfbfb;
                 border-radius: 10px;
             }
@@ -48,7 +51,7 @@
             #userForm, #msgForm {
                 position: relative;
                 width: 100%;
-                padding: 10px 20px;
+                padding: 20px;
             }
 
             #userForm::after, #msgForm::after {
@@ -60,6 +63,14 @@
                 left: 50%;
                 transform: translateX(-50%);
                 border: solid .5px #dadada;
+            }
+
+            #userForm input {
+                border-radius: 5px;
+                border: solid 1px #aaaaaa;
+                padding: 5px;
+                font-family: 'Montserrat', sans-serif;
+                margin-right: 10px;
             }
 
 
@@ -78,75 +89,74 @@
                 justify-content: flex-start;
             }
 
-                #messages li div {
-                    background-color: #dadada;
-                    border-radius: 5px;
-                    padding: 20px;
-                    display: inline-block;
-                    min-width: 300px;
-                    max-width: calc(100% - 50px);
-                    position: relative;
+            #messages li div {
+                background-color: #dadada;
+                border-radius: 5px;
+                padding: 20px;
+                display: inline-block;
+                min-width: 300px;
+                max-width: calc(100% - 50px);
+                position: relative;
+            }
+
+            #messages li div.my-own-one {
+                background-color: rgb(20,30,48);
+                color: white;
+                justify-self: right;
+            }
+
+            #messages li div.my-own-one span {
+                color: white;
+            }
+
+            #messages li span {
+                font-style: italic;
+                color: #555555;
+                font-size: 14px;
+            }
+
+            #messages li hr {
+                margin: 5px 0 15px;
+                border: solid .5px #aaaaaa
+            }
+
+            #messages li div::before {
+                content: '';
+                position: absolute;
+                width: 0px;
+                height: 0px;
+                width: 0;
+                height: 0;
+                border-style: solid;
+                border-width: 0 0 22px 22px;
+                border-color: transparent transparent #dadada transparent;
+                bottom: 0;
+                left: -15px;
+            }
+
+            #messages li div.my-own-one::before {
+                width: 0;
+                height: 0;
+                border-style: solid;
+                border-width: 22px 0 0 22px;
+                border-color: transparent transparent transparent rgb(20,30,48);
+                left: calc(100% - 7px);
+            }
+
+            #messages li p {
+                font-size: 20px;
+            }
+
+            @keyframes newmsg {
+                0% {
+                    opacity: 0;
+                    transform: translateY(20px);
                 }
-
-                #messages li div.my-own-one {
-                    background-color: rgb(20,30,48);
-                    color: white;
-                    justify-self: right;
+                100% {
+                    opacity: 1;
+                    transform: translateY(0);
                 }
-
-                #messages li div.my-own-one span {
-                    color: white;
-                }
-
-                #messages li span {
-                    font-style: italic;
-                    color: #555555;
-                    font-size: 14px;
-                }
-
-                #messages li hr {
-                    margin: 5px 0 15px;
-                    border: solid .5px #aaaaaa
-                }
-
-                #messages li div::before {
-                    content: '';
-                    position: absolute;
-                    width: 0px;
-                    height: 0px;
-                    width: 0;
-                    height: 0;
-                    border-style: solid;
-                    border-width: 0 0 22px 22px;
-                    border-color: transparent transparent #dadada transparent;
-                    bottom: 0;
-                    left: -15px;
-                }
-
-                #messages li div.my-own-one::before {
-                    width: 0;
-                    height: 0;
-                    border-style: solid;
-                    border-width: 22px 0 0 22px;
-                    border-color: transparent transparent transparent rgb(20,30,48);
-                    left: calc(100% - 7px);
-                }
-
-                #messages li p {
-                    font-size: 20px;
-                }
-
-
-@keyframes newmsg {
-    0% {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    100% {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
+            }
 
             #messages li.mod-msg {
                 font-style: italic;
@@ -160,16 +170,55 @@
                 justify-content: space-between;
             }
 
-            #msgForm button {
-                width: 50px;
+            button {
+                width: 65px;
+                border: none;
+                background: rgb(20,30,48);
+                color: white;
+                border-radius: 5px;
+                font-family: 'Montserrat', sans-serif;
+            }
+
+            #userForm button {
+                height: 25px;
             }
 
             #msgForm input {
-                width: calc(100% - 60px);
+                width: calc(100% - 75px);
+                border-radius: 5px;
+                border: solid 1px #aaaaaa;
+                padding: 5px;
+                font-family: 'Montserrat', sans-serif;
+            }
+
+            input:focus {
+                outline: none;
             }
 
             #msgForm::after {
                 top: 0;
+            }
+
+            #users p {
+                border-bottom: solid 1px #aaaaaa;
+                padding: 5px 0 15px;
+                text-transform: uppercase;
+                font-style: italic;
+                letter-spacing: 1px;
+            }
+
+            #users ul {
+                max-height: 768px;
+                height: calc(100% - 40px);
+                overflow-y: scroll;
+            }
+
+            #users li {
+                padding: 5px;
+            }
+
+            #users li:nth-child(odd){
+                background: #dddddd;
             }
 
         </style>
@@ -178,13 +227,12 @@
         <h1>Chatroom with Socket.io</h1>
         <div id="app">
             <form id="userForm" action="">
-                <label for="">Username : </label><input id="u" autocomplete="off" /><button id="sendUser">Send</button>
+                <label for="">Username : </label><input id="u" autocomplete="off" /><button id="sendUser">Submit</button>
             </form>
             <ul id="messages"></ul>
             <div id="users">
-                <p>Online users :</p>
+                <p>Online users</p>
                 <ul>
-                    
                 </ul>
             </div>
             <form id="msgForm" action="">
@@ -239,8 +287,7 @@
             socket.on('username change', data => {
                 var node = document.createElement("li")
                 node.setAttribute('class', 'mod-msg')
-                var textnode = document.createTextNode(data.oldUsername + ' has changed his username: ' + data.newUsername)
-                node.appendChild(textnode)
+                node.innerHTML = `<b>${data.oldUsername}</b> has changed his username: <b>${data.newUsername}</b>`
                 document.querySelector('#messages').appendChild(node)
             })
 
@@ -248,8 +295,7 @@
             socket.on('new user', newUser => {
                 var node = document.createElement("li")
                 node.setAttribute('class', 'mod-msg')
-                var textnode = document.createTextNode(newUser + ' is online now.')
-                node.appendChild(textnode)
+                node.innerHTML = `<b>${newUser}</b> is online now.`
                 document.querySelector('#messages').appendChild(node)
             })
 
@@ -289,8 +335,7 @@
             socket.on('exit user', obj => {
                 var node = document.createElement("li")
                 node.setAttribute('class', 'mod-msg')
-                var textnode = document.createTextNode(obj.username + ' is gone !')
-                node.appendChild(textnode)
+                node.innerHTML = `${obj.username} is gone !`
                 document.querySelector('#messages').appendChild(node)
             })
 
