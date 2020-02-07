@@ -266,21 +266,25 @@
 
             // Message sending
             document.querySelector('form#msgForm').addEventListener('submit', e => {
-                e.preventDefault()
-                socket.emit('chat message', {content: document.querySelector('#m').value, username: myNickname, id: myID})
-                document.querySelector('#m').value = ''
-                return false
+                if (document.querySelector('#m').value != '') {
+                    e.preventDefault()
+                    socket.emit('chat message', {content: document.querySelector('#m').value, username: myNickname, id: myID})
+                    document.querySelector('#m').value = ''
+                    return false
+                }
             }, false)
 
             // Username changing
             document.querySelector('form#userForm').addEventListener('submit', e => {
-                e.preventDefault()
-                socket.emit('username change', {
-                    id: myID,
-                    oldUsername: myNickname,
-                    newUsername: document.querySelector('#u').value
-                })
-                myNickname = document.querySelector('#u').value
+                if (document.querySelector('#m').value != '') {
+                    e.preventDefault()
+                    socket.emit('username change', {
+                        id: myID,
+                        oldUsername: myNickname,
+                        newUsername: document.querySelector('#u').value
+                    })
+                    myNickname = document.querySelector('#u').value
+                }
             }, false)
 
             // Username changed
